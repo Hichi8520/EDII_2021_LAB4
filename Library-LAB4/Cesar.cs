@@ -9,7 +9,7 @@ namespace Library_LAB4
         public static int buffer = 255;
         public static int bufferLlave = 255;
         public List<byte> llave = new List<byte>();
-        public Dictionary<byte, byte> tablaCesar = new Dictionary<byte, byte>();
+        public Dictionary<byte, byte> tablaCesar = new Dictionary<byte, byte>(); // <bytes normales, bytes con corrimiento>
 
         public bool Cifrar(string rutaArchivo, string rutaLlave, string rutaCifrado, string[] nombreArchivo)
         {
@@ -38,6 +38,7 @@ namespace Library_LAB4
                 }
 
                 // llenar tabla cesar con el corrimiento
+                llenarTablaCesar();
 
                 escribirCifrado(rutaArchivo, rutaCifrado, nombreArchivo);
                 return true;
@@ -50,12 +51,56 @@ namespace Library_LAB4
         }
         public string Descifrar(string rutaCifrado, string rutaDescifrado)
         {
+            return "";
+        }
 
+        private void llenarTablaCesar()
+        {
+            int indice = 0;
+            foreach (var item in llave)
+            {
+                tablaCesar.Add(Convert.ToByte(indice), item);
+                indice++;
+            }
+
+            for (int i = 0; i < bufferLlave; i++) // i < 255
+            {
+                if(!tablaCesar.ContainsValue(Convert.ToByte(i)))
+                {
+                    tablaCesar.Add(Convert.ToByte(indice), Convert.ToByte(i));
+                    indice++;
+                }
+            }
         }
 
         private void escribirCifrado(string rutaArchivo, string rutaCifrado, string[] nombreArchivo)
         {
-            
+            try
+            {
+                using var Fs = new FileStream(rutaArchivo, FileMode.Open);
+                using BinaryReader Br = new BinaryReader(Fs);
+                using FileStream writeStream = new FileStream($"{rutaCifrado}/{nombreArchivo[0]}.csr", FileMode.OpenOrCreate);
+                using BinaryWriter Bw = new BinaryWriter(writeStream);
+
+                var byteBuffer = new byte[buffer];
+
+                while (Br.BaseStream.Position != Br.BaseStream.Length)
+                {
+                    byteBuffer = Br.ReadBytes(buffer);
+                    foreach (var item in byteBuffer)
+                    {
+                        // Intercambiar byte del texto por byte del diccionario con corrimiento
+                        var caracter = tablaCesar[item];
+                        Bw.Write(caracter);
+                    }
+                }
+
+                tablaCesar.Clear();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
         }
     }
 }
