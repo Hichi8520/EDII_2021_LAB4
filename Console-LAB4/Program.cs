@@ -23,7 +23,7 @@ namespace Console_LAB4
             Console.WriteLine($@"Archivo cifrado en la ruta: {rutaCifrado}{fileName[0]}.csr");
 
             // DESCIFRAR
-            cesar.Descifrar($@"C:\Users\hichi\Desktop\Lab4\Cesar\{fileName[0]}.csr", @"C:\Users\hichi\Desktop\Lab4\Cesar\");
+            cesar.Descifrar($@"C:\Users\hichi\Desktop\Lab4\Cesar\{fileName[0]}.csr", rutaLlave, @"C:\Users\hichi\Desktop\Lab4\Cesar\", fileName);
             Console.WriteLine($@"Archivo descifrado en la ruta: {rutaCifrado}{fileName[0]}.csr");
 
             // BORRAR ARCHIVO CIFRADO
