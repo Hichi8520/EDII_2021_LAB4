@@ -19,11 +19,11 @@ namespace Console_LAB4
 
             // CIFRAR
             string[] fileName = nombreArchivo.Split(".");
-            cesar.Cifrar(rutaArchivo, rutaLlave, rutaCifrado, fileName);
+            cesar.Cifrar(rutaArchivo, rutaLlave, rutaCifrado, fileName[0]);
             Console.WriteLine($@"Archivo cifrado en la ruta: {rutaCifrado}{fileName[0]}.csr");
 
             // DESCIFRAR
-            cesar.Descifrar($@"C:\Users\hichi\Desktop\Lab4\Cesar\{fileName[0]}.csr", rutaLlave, @"C:\Users\hichi\Desktop\Lab4\Cesar\", fileName);
+            cesar.Descifrar($@"C:\Users\hichi\Desktop\Lab4\Cesar\{fileName[0]}.csr", rutaLlave, @"C:\Users\hichi\Desktop\Lab4\Cesar\", fileName[0]);
             Console.WriteLine($@"Archivo descifrado en la ruta: {rutaCifrado}{fileName[0]}.csr");
 
             // BORRAR ARCHIVO CIFRADO
