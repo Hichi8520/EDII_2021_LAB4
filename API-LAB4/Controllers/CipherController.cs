@@ -63,41 +63,42 @@ namespace API_LAB4.Controllers
                     string pathCesar = Path.Combine(path, "Cesar");
 
 
-                    if (System.IO.File.Exists($"{pathCesar}/{file.FileName}.txt"))
+                    if (System.IO.File.Exists($"{pathCesar}/{file.FileName}"))
                     {
-                        System.IO.File.Delete($"{pathCesar}/{file.FileName}.txt");
+                        System.IO.File.Delete($"{pathCesar}/{file.FileName}");
                     }
 
-                    using var saverArchivo = new FileStream($"{pathCesar}/{file.FileName}.txt", FileMode.OpenOrCreate);
+                    using var saverArchivo = new FileStream($"{pathCesar}/{file.FileName}", FileMode.OpenOrCreate);
                     await file.CopyToAsync(saverArchivo);
                     saverArchivo.Close();
 
-                    if (System.IO.File.Exists($"{pathCesar}/{key.FileName}.txt"))
+                    if (System.IO.File.Exists($"{pathCesar}/{key.FileName}"))
                     {
-                        System.IO.File.Delete($"{pathCesar}/{key.FileName}.txt");
+                        System.IO.File.Delete($"{pathCesar}/{key.FileName}");
                     }
 
-                    using var saverLave = new FileStream($"{pathCesar}/{key.FileName}.txt", FileMode.OpenOrCreate);
-                    await file.CopyToAsync(saverLave);
-                    saverLave.Close();
+                    using var saverLlave = new FileStream($"{pathCesar}/{key.FileName}", FileMode.OpenOrCreate);
+                    await key.CopyToAsync(saverLlave);
+                    saverLlave.Close();
 
 
                     // Proceso Cifrado César
-                    string rutaArchivo = $"{pathCesar}/{file.FileName}.txt";
-                    string rutaLlave = $"{pathCesar}/{key.FileName}.txt";
+                    string rutaArchivo = $"{pathCesar}/{file.FileName}";
+                    string rutaLlave = $"{pathCesar}/{key.FileName}";
                     string rutaCifrado = pathCesar;
+                    string[] fileName = file.FileName.Split(".");
 
                     Cesar cesar = new Cesar();
-                    cesar.Cifrar(rutaArchivo, rutaLlave, rutaCifrado, file.FileName);
+                    cesar.Cifrar(rutaArchivo, rutaLlave, rutaCifrado, fileName[0]);
 
                     //Archivo a mandar de regreso
-                    return PhysicalFile($"{rutaCifrado}/{file.FileName}.csr", "text/plain", $"{file.FileName}.csr");
+                    return PhysicalFile($"{rutaCifrado}/{fileName[0]}.csr", "text/plain", $"{fileName[0]}.csr");
                 }
                 catch (Exception ex)
                 {
                     return StatusCode(500, "Internal server error");
                 }
-            }
+        }
             else if (method.Equals("zigzag"))
             {
                 try
@@ -109,35 +110,36 @@ namespace API_LAB4.Controllers
                     string pathCesar = Path.Combine(path, "Cesar");
 
 
-                    if (System.IO.File.Exists($"{pathCesar}/{file.FileName}.txt"))
+                    if (System.IO.File.Exists($"{pathCesar}/{file.FileName}"))
                     {
-                        System.IO.File.Delete($"{pathCesar}/{file.FileName}.txt");
+                        System.IO.File.Delete($"{pathCesar}/{file.FileName}");
                     }
 
-                    using var saverArchivo = new FileStream($"{pathCesar}/{file.FileName}.txt", FileMode.OpenOrCreate);
+                    using var saverArchivo = new FileStream($"{pathCesar}/{file.FileName}", FileMode.OpenOrCreate);
                     await file.CopyToAsync(saverArchivo);
                     saverArchivo.Close();
 
-                    if (System.IO.File.Exists($"{pathCesar}/{key.FileName}.txt"))
+                    if (System.IO.File.Exists($"{pathCesar}/{key.FileName}"))
                     {
-                        System.IO.File.Delete($"{pathCesar}/{key.FileName}.txt");
+                        System.IO.File.Delete($"{pathCesar}/{key.FileName}");
                     }
 
-                    using var saverLave = new FileStream($"{pathCesar}/{key.FileName}.txt", FileMode.OpenOrCreate);
-                    await file.CopyToAsync(saverLave);
-                    saverLave.Close();
+                    using var saverLlave = new FileStream($"{pathCesar}/{key.FileName}", FileMode.OpenOrCreate);
+                    await key.CopyToAsync(saverLlave);
+                    saverLlave.Close();
 
 
                     // Proceso Cifrado César
-                    string rutaArchivo = $"{pathCesar}/{file.FileName}.txt";
-                    string rutaLlave = $"{pathCesar}/{key.FileName}.txt";
+                    string rutaArchivo = $"{pathCesar}/{file.FileName}";
+                    string rutaLlave = $"{pathCesar}/{key.FileName}";
                     string rutaCifrado = pathCesar;
+                    string[] fileName = file.FileName.Split(".");
 
                     Cesar cesar = new Cesar();
-                    cesar.Cifrar(rutaArchivo, rutaLlave, rutaCifrado, file.FileName);
+                    cesar.Cifrar(rutaArchivo, rutaLlave, rutaCifrado, fileName[0]);
 
                     //Archivo a mandar de regreso
-                    return PhysicalFile($"{rutaCifrado}/{file.FileName}.csr", "text/plain", $"{file.FileName}.csr");
+                    return PhysicalFile($"{rutaCifrado}/{fileName[0]}.csr", "text/plain", $"{fileName[0]}.csr");
                 }
                 catch (Exception ex)
                 {
