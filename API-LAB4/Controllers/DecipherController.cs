@@ -24,6 +24,8 @@ namespace API_LAB4.Controllers
         [HttpPost]
         public async Task<ActionResult> DecompressFile([FromForm] IFormFile file, [FromForm] IFormFile key)
         {
+            if(file == null || key == null) return StatusCode(400, "Bad request");
+
             string[] archivo = file.FileName.Split('.');
             if(archivo[1].Equals("csr"))
             {
@@ -80,36 +82,36 @@ namespace API_LAB4.Controllers
                     var path = _env.ContentRootPath;
                     path = Path.Combine(path, "Files");
 
-                    string pathCesar = Path.Combine(path, "Cesar");
+                    string pathZigZag = Path.Combine(path, "ZigZag");
 
 
-                    if (System.IO.File.Exists($"{pathCesar}/{file.FileName}"))
+                    if (System.IO.File.Exists($"{pathZigZag}/{file.FileName}"))
                     {
-                        System.IO.File.Delete($"{pathCesar}/{file.FileName}");
+                        System.IO.File.Delete($"{pathZigZag}/{file.FileName}");
                     }
 
-                    using var saverArchivo = new FileStream($"{pathCesar}/{file.FileName}", FileMode.OpenOrCreate);
+                    using var saverArchivo = new FileStream($"{pathZigZag}/{file.FileName}", FileMode.OpenOrCreate);
                     await file.CopyToAsync(saverArchivo);
                     saverArchivo.Close();
 
-                    if (System.IO.File.Exists($"{pathCesar}/{key.FileName}"))
+                    if (System.IO.File.Exists($"{pathZigZag}/{key.FileName}"))
                     {
-                        System.IO.File.Delete($"{pathCesar}/{key.FileName}");
+                        System.IO.File.Delete($"{pathZigZag}/{key.FileName}");
                     }
 
-                    using var saverLave = new FileStream($"{pathCesar}/{key.FileName}", FileMode.OpenOrCreate);
+                    using var saverLave = new FileStream($"{pathZigZag}/{key.FileName}", FileMode.OpenOrCreate);
                     await file.CopyToAsync(saverLave);
                     saverLave.Close();
 
 
-                    // Proceso Cifrado César
-                    string rutaCifrado = $"{pathCesar}/{file.FileName}";
-                    string rutaLlave = $"{pathCesar}/{key.FileName}";
-                    string rutaDescifrado = pathCesar;
+                    // Proceso Cifrado ZigZag
+                    string rutaCifrado = $"{pathZigZag}/{file.FileName}";
+                    string rutaLlave = $"{pathZigZag}/{key.FileName}";
+                    string rutaDescifrado = pathZigZag;
                     string[] fileName = file.FileName.Split(".");
 
-                    Cesar cesar = new Cesar();
-                    cesar.Descifrar(rutaCifrado, rutaLlave, rutaDescifrado, fileName[0]);
+                    ZigZag zigZag = new ZigZag();
+                    zigZag.Descifrar(rutaCifrado, rutaLlave, rutaDescifrado, fileName[0]);
 
                     //Archivo a mandar de regreso
                     return PhysicalFile($"{rutaDescifrado}/{fileName[0]}.txt", "text/plain", $"{fileName[0]}.txt");

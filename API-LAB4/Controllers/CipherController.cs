@@ -52,7 +52,9 @@ namespace API_LAB4.Controllers
         [HttpPost]
         public async Task<ActionResult> CifrarArchivo([FromForm] IFormFile file, [FromForm] IFormFile key, string method)
         {
-            if(method.Equals("cesar"))
+            if (file == null || key == null) return StatusCode(400, "Bad request");
+
+            if (method.Equals("cesar"))
             {
                 try
                 {
@@ -98,7 +100,7 @@ namespace API_LAB4.Controllers
                 {
                     return StatusCode(500, "Internal server error");
                 }
-        }
+            }
             else if (method.Equals("zigzag"))
             {
                 try
@@ -107,39 +109,39 @@ namespace API_LAB4.Controllers
                     var path = _env.ContentRootPath;
                     path = Path.Combine(path, "Files");
 
-                    string pathCesar = Path.Combine(path, "Cesar");
+                    string pathZigZag = Path.Combine(path, "ZigZag");
 
 
-                    if (System.IO.File.Exists($"{pathCesar}/{file.FileName}"))
+                    if (System.IO.File.Exists($"{pathZigZag}/{file.FileName}"))
                     {
-                        System.IO.File.Delete($"{pathCesar}/{file.FileName}");
+                        System.IO.File.Delete($"{pathZigZag}/{file.FileName}");
                     }
 
-                    using var saverArchivo = new FileStream($"{pathCesar}/{file.FileName}", FileMode.OpenOrCreate);
+                    using var saverArchivo = new FileStream($"{pathZigZag}/{file.FileName}", FileMode.OpenOrCreate);
                     await file.CopyToAsync(saverArchivo);
                     saverArchivo.Close();
 
-                    if (System.IO.File.Exists($"{pathCesar}/{key.FileName}"))
+                    if (System.IO.File.Exists($"{pathZigZag}/{key.FileName}"))
                     {
-                        System.IO.File.Delete($"{pathCesar}/{key.FileName}");
+                        System.IO.File.Delete($"{pathZigZag}/{key.FileName}");
                     }
 
-                    using var saverLlave = new FileStream($"{pathCesar}/{key.FileName}", FileMode.OpenOrCreate);
+                    using var saverLlave = new FileStream($"{pathZigZag}/{key.FileName}", FileMode.OpenOrCreate);
                     await key.CopyToAsync(saverLlave);
                     saverLlave.Close();
 
 
-                    // Proceso Cifrado César
-                    string rutaArchivo = $"{pathCesar}/{file.FileName}";
-                    string rutaLlave = $"{pathCesar}/{key.FileName}";
-                    string rutaCifrado = pathCesar;
+                    // Proceso Cifrado ZigZag
+                    string rutaArchivo = $"{pathZigZag}/{file.FileName}";
+                    string rutaLlave = $"{pathZigZag}/{key.FileName}";
+                    string rutaCifrado = pathZigZag;
                     string[] fileName = file.FileName.Split(".");
 
-                    Cesar cesar = new Cesar();
-                    cesar.Cifrar(rutaArchivo, rutaLlave, rutaCifrado, fileName[0]);
+                    ZigZag zigZag = new ZigZag();
+                    zigZag.Cifrar(rutaArchivo, rutaLlave, rutaCifrado, fileName[0]);
 
                     //Archivo a mandar de regreso
-                    return PhysicalFile($"{rutaCifrado}/{fileName[0]}.csr", "text/plain", $"{fileName[0]}.csr");
+                    return PhysicalFile($"{rutaCifrado}/{fileName[0]}.zz", "text/plain", $"{fileName[0]}.zz");
                 }
                 catch (Exception ex)
                 {

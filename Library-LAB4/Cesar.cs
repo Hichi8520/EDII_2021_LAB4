@@ -6,7 +6,7 @@ namespace Library_LAB4
 {
     public class Cesar : ICifrado
     {
-        public static int buffer = 255;
+        public static int buffer = 10000;
         public static int bufferLlave = 255;
         public List<byte> llave = new List<byte>();
         public Dictionary<byte, byte> tablaCesar = new Dictionary<byte, byte>(); // <bytes normales, bytes con corrimiento>
