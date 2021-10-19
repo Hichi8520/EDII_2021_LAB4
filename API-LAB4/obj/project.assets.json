@@ -34,11 +34,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\hichi\\Documents\\GitHub\\EDII_2021_LAB4\\API-LAB4\\API-LAB4.csproj",
+      "projectUniqueName": "C:\\Users\\hichi\\Documents\\Hichi U\\10mo Ciclo\\Estructura de Datos II (Práctica)\\Laboratorios\\Lab 5\\EDII_2021_LAB4\\API-LAB4\\API-LAB4.csproj",
       "projectName": "API-LAB4",
-      "projectPath": "C:\\Users\\hichi\\Documents\\GitHub\\EDII_2021_LAB4\\API-LAB4\\API-LAB4.csproj",
+      "projectPath": "C:\\Users\\hichi\\Documents\\Hichi U\\10mo Ciclo\\Estructura de Datos II (Práctica)\\Laboratorios\\Lab 5\\EDII_2021_LAB4\\API-LAB4\\API-LAB4.csproj",
       "packagesPath": "C:\\Users\\hichi\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\hichi\\Documents\\GitHub\\EDII_2021_LAB4\\API-LAB4\\obj\\",
+      "outputPath": "C:\\Users\\hichi\\Documents\\Hichi U\\10mo Ciclo\\Estructura de Datos II (Práctica)\\Laboratorios\\Lab 5\\EDII_2021_LAB4\\API-LAB4\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\",
@@ -60,8 +60,8 @@
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
           "projectReferences": {
-            "C:\\Users\\hichi\\Documents\\GitHub\\EDII_2021_LAB4\\Library-LAB4\\Library-LAB4.csproj": {
-              "projectPath": "C:\\Users\\hichi\\Documents\\GitHub\\EDII_2021_LAB4\\Library-LAB4\\Library-LAB4.csproj"
+            "C:\\Users\\hichi\\Documents\\Hichi U\\10mo Ciclo\\Estructura de Datos II (Práctica)\\Laboratorios\\Lab 5\\EDII_2021_LAB4\\Library-LAB4\\Library-LAB4.csproj": {
+              "projectPath": "C:\\Users\\hichi\\Documents\\Hichi U\\10mo Ciclo\\Estructura de Datos II (Práctica)\\Laboratorios\\Lab 5\\EDII_2021_LAB4\\Library-LAB4\\Library-LAB4.csproj"
             }
           }
         }
@@ -93,7 +93,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.401\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.402\\RuntimeIdentifierGraph.json"
       }
     }
   }
