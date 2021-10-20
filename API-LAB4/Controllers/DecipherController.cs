@@ -100,7 +100,7 @@ namespace API_LAB4.Controllers
                     }
 
                     using var saverLave = new FileStream($"{pathZigZag}/{key.FileName}", FileMode.OpenOrCreate);
-                    await file.CopyToAsync(saverLave);
+                    await key.CopyToAsync(saverLave);
                     saverLave.Close();
 
 
@@ -147,7 +147,7 @@ namespace API_LAB4.Controllers
                     }
 
                     using var saverLave = new FileStream($"{pathSdes}/{key.FileName}", FileMode.OpenOrCreate);
-                    await file.CopyToAsync(saverLave);
+                    await key.CopyToAsync(saverLave);
                     saverLave.Close();
 
 

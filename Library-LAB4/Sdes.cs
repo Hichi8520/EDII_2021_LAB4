@@ -33,8 +33,8 @@ namespace Library_LAB4
 
         public Sdes(string rutaPermutaciones)
         {
-            //try
-            //{
+            try
+            {
                 string[] permutaciones = File.ReadAllLines(rutaPermutaciones);
 
                 P10 = permutaciones[0].Split(',').Select(int.Parse).ToArray();
@@ -45,18 +45,18 @@ namespace Library_LAB4
 
                 IPINV = new int[8];
                 for (int i = 1; i <= 8; i++) IPINV[i-1] = Array.IndexOf(IP, i);
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine(e);
-            //    throw;
-            //}
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         public bool Cifrar(string rutaArchivo, string rutaLlave, string rutaCifrado, string nombreArchivo)
         {
-            //try
-            //{
+            try
+            {
                 cifrando = true;
                 descifrando = false;
 
@@ -72,18 +72,18 @@ namespace Library_LAB4
 
                 escribirArchivoResultante(rutaArchivo, rutaCifrado, nombreArchivo);
                 return true;
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine(e);
-            //    return false;
-            //}
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
         }
 
         public bool Descifrar(string rutaCifrado, string rutaLlave, string rutaDescifrado, string nombreArchivo)
         {
-            //try
-            //{
+            try
+            {
                 cifrando = false;
                 descifrando = true;
 
@@ -99,12 +99,12 @@ namespace Library_LAB4
 
                 escribirArchivoResultante(rutaCifrado, rutaDescifrado, nombreArchivo);
                 return true;
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine(e);
-            //    return false;
-            //}
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
         }
 
         private void GenerarLlaves()
@@ -124,8 +124,8 @@ namespace Library_LAB4
 
         private void escribirArchivoResultante(string rutaOrigen, string rutaDestino, string nombreArchivo)
         {
-            //try
-            //{
+            try
+            {
                 using var Fs = new FileStream(rutaOrigen, FileMode.Open);
                 using BinaryReader Br = new BinaryReader(Fs);
                 string extension = "";
@@ -159,11 +159,11 @@ namespace Library_LAB4
                     }
                     Bw.Write(WriteBuffer.ToArray());
                 }
-            //}
-            //catch (Exception ex)
-            //{
-            //    Console.WriteLine(ex);
-            //}
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
         }
 
         // ******************************* FUNCIONES PROCESO DE CIFRADO *******************************
