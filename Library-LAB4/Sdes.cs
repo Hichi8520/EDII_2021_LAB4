@@ -20,6 +20,16 @@ namespace Library_LAB4
         private int[] IPINV;
         Dictionary<int, char> value = new Dictionary<int, char>();
 
+        private string[,,] Sbox1 = { { { "01" }, { "00" }, { "11"  }, { "10" } },
+                                     { { "11" }, { "10" }, { "01"  }, { "00" } },
+                                     { { "00" }, { "10" }, { "01"  }, { "11" } },
+                                     { { "11" }, { "01" }, { "11"  }, { "10" } } };
+
+        private string[,,] Sbox2 = { { { "00" }, { "01" }, { "10"  }, { "11" } },
+                                     { { "10" }, { "00" }, { "01"  }, { "11" } },
+                                     { { "11" }, { "00" }, { "01"  }, { "00" } },
+                                     { { "10" }, { "01" }, { "00"  }, { "11" } } };
+
         public Sdes(string rutaPermutaciones)
         {
             try
@@ -97,6 +107,7 @@ namespace Library_LAB4
                     {
                         string caracterTemp = Convert.ToString(item, 2).PadLeft(8, '0');
 
+
                         // string de binario a byte
                         Bw.Write(caracter);
                     }
@@ -145,6 +156,51 @@ namespace Library_LAB4
                 Console.WriteLine(e);
                 return false;
             }
+        }
+
+        private string CodificacionIntermedia(string stringIP, string Kinicial, string Kfinal)
+        {
+            string mitadInicial = stringIP.Substring(0,4);
+            string mitadFinal = stringIP.Substring(4, 4);
+
+            string expMitad = FuncEP(mitadFinal);
+
+            expMitad = XOR(expMitad, Kinicial);
+
+            string mitadInicial_expMitad = expMitad.Substring(0,4);
+            string mitadFinal_expMitad = expMitad.Substring(4,4);
+
+            string PrimeraSbox = FuncSbox(mitadInicial_expMitad, Sbox1);
+            string SegundaSbox = FuncSbox(mitadFinal_expMitad, Sbox2);
+
+            string UnionSbox = FuncP4(PrimeraSbox + SegundaSbox);
+
+            mitadInicial = XOR(mitadInicial, UnionSbox);
+
+            return mitadInicial + mitadFinal;
+        }
+
+        private string XOR(string strArr1, string strArr2)
+        {
+            string formateado = "";
+
+            for (int i = 0; i < strArr1.Length; i++)
+            {
+                if (strArr1[i] == strArr2[i])
+                {
+                    formateado += '0';
+                }
+                else
+                {
+                    formateado += '1';
+                }
+            }
+            return formateado;
+        }
+
+        private string Swap(string strArr1, string strArr2)
+        {
+            return strArr2 + strArr1;
         }
 
         // ******************************* FUNCIONES DE PERMUTACIONES *******************************
@@ -223,6 +279,15 @@ namespace Library_LAB4
         private string LeftShift2(string stringArr)
         {
             return stringArr.Substring(2, 3) + stringArr.Substring(0, 2);
+        }
+
+        // ******************************* FUNCIÓN DE SWAP BOXES *******************************
+
+        private string FuncSbox(string strArr, string[,,] Sbox)
+        {
+            int Fila = Convert.ToInt32(strArr.Substring(0,1) + strArr.Substring(3,1), 2);
+            int Columna = Convert.ToInt32(strArr.Substring(1, 1) + strArr.Substring(2, 1), 2);
+            return Sbox[Fila, Columna, 0] + Sbox[Fila, Columna, 1];
         }
     }
 }
