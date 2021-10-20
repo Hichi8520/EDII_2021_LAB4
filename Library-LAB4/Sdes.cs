@@ -1,62 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace Library_LAB4
 {
-    public class Sdes : ICifradoSDES
+    public class Sdes : ICifrado
     {
         public static int buffer = 255;
         public static int llave = 0;
-        Dictionary<int, int> p10 = new Dictionary<int, int>();
-        Dictionary<int, int> p8 = new Dictionary<int, int>();
-        Dictionary<int, int> p4 = new Dictionary<int, int>();
-        Dictionary<int, int> ep = new Dictionary<int, int>();
-        Dictionary<int, int> ip = new Dictionary<int, int>();
-        Dictionary<int, int> ipinv = new Dictionary<int, int>();
+        private int[] P10;
+        private int[] P8;
+        private int[] P4;
+        private int[] EP;
+        private int[] IP;
+        private int[] IPINV;
         Dictionary<int, char> value = new Dictionary<int, char>();
 
-        public bool Cifrar(string rutaArchivo, string rutaCifrado, string nombreArchivo, IDictionary<string, string[]> permutaciones)
+        public Sdes(string rutaPermutaciones)
         {
             try
             {
-                string[] p10v = default;
-                permutaciones.TryGetValue("P10", out p10v);
-                for (int i = 1; i <= p10v.Length; i++)
-                {
-                    p10.Add(i, Convert.ToInt32(p10v[i - 1]));
-                }
-                string[] p8v = default;
-                permutaciones.TryGetValue("P8", out p8v);
-                for (int i = 1; i <= p8v.Length; i++)
-                {
-                    p8.Add(i, Convert.ToInt32(p8v[i - 1]));
-                }
-                string[] p4v = default;
-                permutaciones.TryGetValue("P4", out p4v);
-                for (int i = 1; i <= p4v.Length; i++)
-                {
-                    p4.Add(i, Convert.ToInt32(p4v[i - 1]));
-                }
-                string[] pep = default;
-                permutaciones.TryGetValue("EP", out pep);
-                for (int i = 1; i <= pep.Length; i++)
-                {
-                    ep.Add(i, Convert.ToInt32(pep[i - 1]));
-                }
-                string[] pip = default;
-                permutaciones.TryGetValue("IP", out pip);
-                for (int i = 1; i <= pip.Length; i++)
-                {
-                    ip.Add(i, Convert.ToInt32(pip[i - 1]));
-                }
-                string[] pipv = default;
-                permutaciones.TryGetValue("IP-1", out pipv);
-                for (int i = 1; i <= pipv.Length; i++)
-                {
-                    ipinv.Add(i, Convert.ToInt32(pipv[i - 1]));
-                }
+                string[] permutaciones = File.ReadAllLines(rutaPermutaciones);
+
+                P10 = permutaciones[0].Split(',').Select(int.Parse).ToArray();
+                P8 = permutaciones[1].Split(',').Select(int.Parse).ToArray();
+                P4 = permutaciones[2].Split(',').Select(int.Parse).ToArray();
+                EP = permutaciones[3].Split(',').Select(int.Parse).ToArray();
+                IP = permutaciones[4].Split(',').Select(int.Parse).ToArray();
+
+                IPINV = new int[8];
+                for (int i = 0; i < 8; i++) IPINV[i] = Array.IndexOf(IP, i);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        public bool Cifrar(string rutaArchivo, string rutaLlave, string rutaCifrado, string nombreArchivo)
+        {
+            try
+            {
                 escribirCifrado(rutaArchivo, rutaCifrado, nombreArchivo);
                 return true;
             }
@@ -121,7 +108,7 @@ namespace Library_LAB4
             return binario;
         }
 
-        public bool Descifrar(string rutaCifrado, string rutaDescifrado, string nombreArchivo, IDictionary<string, string[]> permutaciones)
+        public bool Descifrar(string rutaCifrado, string rutaLlave, string rutaDescifrado, string nombreArchivo)
         {
             try
             {
