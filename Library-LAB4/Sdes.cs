@@ -18,7 +18,8 @@ namespace Library_LAB4
         private int[] EP;
         private int[] IP;
         private int[] IPINV;
-        Dictionary<int, char> value = new Dictionary<int, char>();
+        private bool cifrando;
+        private bool descifrando;
 
         private string[,,] Sbox1 = { { { "01" }, { "00" }, { "11"  }, { "10" } },
                                      { { "11" }, { "10" }, { "01"  }, { "00" } },
@@ -56,15 +57,47 @@ namespace Library_LAB4
         {
             try
             {
+                cifrando = true;
+                descifrando = false;
+
                 // LEER ARCHIVO CON LLAVE
                 int llaveInt = Convert.ToInt32(File.ReadAllText(rutaLlave));
                 llave = Convert.ToString(llaveInt, 2);
                 llave = llave.PadLeft(10, '0');
                 Console.WriteLine("Llave: " + llave);
 
+                if (llaveInt < 0 || llaveInt > 1023) return false;
+
                 GenerarLlaves();
 
-                escribirCifrado(rutaArchivo, rutaCifrado, nombreArchivo);
+                escribirArchivoResultante(rutaArchivo, rutaCifrado, nombreArchivo);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
+        }
+
+        public bool Descifrar(string rutaCifrado, string rutaLlave, string rutaDescifrado, string nombreArchivo)
+        {
+            try
+            {
+                cifrando = false;
+                descifrando = true;
+
+                // LEER ARCHIVO CON LLAVE
+                int llaveInt = Convert.ToInt32(File.ReadAllText(rutaLlave));
+                llave = Convert.ToString(llaveInt, 2);
+                llave = llave.PadLeft(10, '0');
+                Console.WriteLine("Llave: " + llave);
+
+                if (llaveInt < 0 || llaveInt > 1023) return false;
+
+                GenerarLlaves();
+
+                escribirArchivoResultante(rutaCifrado, rutaDescifrado, nombreArchivo);
                 return true;
             }
             catch (Exception e)
@@ -89,13 +122,16 @@ namespace Library_LAB4
             K2 = FuncP8(MitadInicialShift + MitadFinalShift);
         }
 
-        private void escribirCifrado(string rutaArchivo, string rutaCifrado, string nombreArchivo)
+        private void escribirArchivoResultante(string rutaOrigen, string rutaDestino, string nombreArchivo)
         {
             try
             {
-                using var Fs = new FileStream(rutaArchivo, FileMode.Open);
+                using var Fs = new FileStream(rutaOrigen, FileMode.Open);
                 using BinaryReader Br = new BinaryReader(Fs);
-                using FileStream writeStream = new FileStream($"{rutaCifrado}/{nombreArchivo}.sdes", FileMode.OpenOrCreate);
+                string extension = "";
+                if (cifrando) extension = ".sdes";
+                else if (descifrando) extension = ".txt";
+                using FileStream writeStream = new FileStream($"{rutaDestino}/{nombreArchivo}{extension}", FileMode.OpenOrCreate);
                 using BinaryWriter Bw = new BinaryWriter(writeStream);
 
                 var byteBuffer = new byte[buffer];
@@ -109,9 +145,15 @@ namespace Library_LAB4
                     {
                         string caracterTemp = Convert.ToString(item, 2).PadLeft(8, '0');
                         caracterTemp = FuncIP(caracterTemp);
-                        caracterTemp = CodificacionIntermedia(caracterTemp, K1);
+
+                        if (cifrando) caracterTemp = CodificacionIntermedia(caracterTemp, K1);
+                        else if (descifrando) caracterTemp = CodificacionIntermedia(caracterTemp, K2);
+
                         caracterTemp = Swap(caracterTemp);
-                        caracterTemp = CodificacionIntermedia(caracterTemp, K2);
+
+                        if (cifrando) caracterTemp = CodificacionIntermedia(caracterTemp, K2);
+                        else if (descifrando) caracterTemp = CodificacionIntermedia(caracterTemp, K1);
+
                         caracterTemp = FuncIPINV(caracterTemp);
                         WriteBuffer.Add((byte)Convert.ToInt32(caracterTemp, 2));
                     }
@@ -149,19 +191,7 @@ namespace Library_LAB4
             return binario;
         }
 
-        public bool Descifrar(string rutaCifrado, string rutaLlave, string rutaDescifrado, string nombreArchivo)
-        {
-            try
-            {
-
-                return true;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return false;
-            }
-        }
+        // ******************************* FUNCIONES PROCESO DE CIFRADO *******************************
 
         private string CodificacionIntermedia(string stringIP, string K)
         {
@@ -275,6 +305,8 @@ namespace Library_LAB4
             }
             return formateado;
         }
+
+        // ******************************* FUNCIONES SHIFT *******************************
 
         private string LeftShift1(string stringArr)
         {

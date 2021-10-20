@@ -10,10 +10,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API_LAB4.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api")]
     [ApiController]
     public class CipherController : ControllerBase
     {
+        private static Sdes sdes;
+
         [HttpGet]
         public string Get()
         {
@@ -37,7 +39,7 @@ namespace API_LAB4.Controllers
             }
 
             // Mensaje de bienvenida
-            string mensaje = "Laboratorio 4 - Inicio Exitoso...\n * Cifrar un archivo - Suba un archivo de texto a cifrar además de otro archivo de texto con la clave en la ruta '/api/cipher/{method}' \n * Descifrar un archivo - Suba un archivo .csr o .zz más el archivo .txt con la clave a la ruta '/api/descipher' y se le devolverá el archivo descifrado";
+            string mensaje = "Laboratorio 5 - Inicio Exitoso...\n * Para configurar las permutaciones del algoritmo SDES suba un archivo de texto a la ruta 'api/sdes/config' en el formato correcto \n * Cifrar un archivo - Suba un archivo de texto a cifrar además de otro archivo de texto con la clave en la ruta '/api/cipher/{method}' \n * Descifrar un archivo - Suba un archivo .csr, .zz o .sdes más el archivo .txt con la clave a la ruta '/api/descipher' y se le devolverá el archivo descifrado";
             return mensaje;
         }
 
@@ -48,7 +50,7 @@ namespace API_LAB4.Controllers
             _env = env;
         }
 
-        [Route("{method}")]
+        [Route("[controller]/{method}")]
         [HttpPost]
         public async Task<ActionResult> CifrarArchivo([FromForm] IFormFile file, [FromForm] IFormFile key, string method)
         {
@@ -154,5 +156,56 @@ namespace API_LAB4.Controllers
             }
         }
 
+        [Route("sdes/config")]
+        [HttpPost]
+        public async Task<ActionResult> ConfigurarSdes([FromForm] IFormFile file)
+        {
+            if (file == null) return StatusCode(400, "Bad request");
+
+            try
+            {
+                // Escribir archivo subido hacia el servidor para trabajar con él
+                var path = _env.ContentRootPath;
+                path = Path.Combine(path, "Files");
+
+                string pathCesar = Path.Combine(path, "Sdes");
+
+
+                if (System.IO.File.Exists($"{pathCesar}/{file.FileName}"))
+                {
+                    System.IO.File.Delete($"{pathCesar}/{file.FileName}");
+                }
+
+                using var saverArchivo = new FileStream($"{pathCesar}/{file.FileName}", FileMode.OpenOrCreate);
+                await file.CopyToAsync(saverArchivo);
+                saverArchivo.Close();
+
+                if (System.IO.File.Exists($"{pathCesar}/{key.FileName}"))
+                {
+                    System.IO.File.Delete($"{pathCesar}/{key.FileName}");
+                }
+
+                using var saverLlave = new FileStream($"{pathCesar}/{key.FileName}", FileMode.OpenOrCreate);
+                await key.CopyToAsync(saverLlave);
+                saverLlave.Close();
+
+
+                // Proceso Cifrado César
+                string rutaArchivo = $"{pathCesar}/{file.FileName}";
+                string rutaLlave = $"{pathCesar}/{key.FileName}";
+                string rutaCifrado = pathCesar;
+                string[] fileName = file.FileName.Split(".");
+
+                Cesar cesar = new Cesar();
+                cesar.Cifrar(rutaArchivo, rutaLlave, rutaCifrado, fileName[0]);
+
+                //Archivo a mandar de regreso
+                return PhysicalFile($"{rutaCifrado}/{fileName[0]}.csr", "text/plain", $"{fileName[0]}.csr");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
+            }
+        }
     }
 }
