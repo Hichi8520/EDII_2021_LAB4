@@ -9,7 +9,7 @@ namespace Library_LAB4
     public class Sdes : ICifrado
     {
         public static int buffer = 255;
-        public static int llave = 0;
+        public static string llave = "";
         private int[] P10;
         private int[] P8;
         private int[] P4;
@@ -44,6 +44,12 @@ namespace Library_LAB4
         {
             try
             {
+                // LEER ARCHIVO CON LLAVE
+                int llaveInt = Convert.ToInt32(File.ReadAllText(rutaLlave));
+                llave = Convert.ToString(llaveInt, 2);
+                llave = llave.PadLeft(10, '0');
+                Console.WriteLine("Llave: " + llave);
+
                 escribirCifrado(rutaArchivo, rutaCifrado, nombreArchivo);
                 return true;
             }
@@ -120,6 +126,72 @@ namespace Library_LAB4
                 Console.WriteLine(e);
                 return false;
             }
+        }
+
+        private string FuncP10(string stringArr)
+        {
+            string formateado = "";
+
+            for (int i = 0; i < 10; i++)
+            {
+                formateado += stringArr[P10[i]];
+            }
+            return formateado;
+        }
+
+        private string FuncP8(string stringArr)
+        {
+            string formateado = "";
+
+            for (int i = 0; i < 8; i++)
+            {
+                formateado += stringArr[P8[i]];
+            }
+            return formateado;
+        }
+
+        private string FuncP4(string stringArr)
+        {
+            string formateado = "";
+
+            for (int i = 0; i < 4; i++)
+            {
+                formateado += stringArr[P4[i]];
+            }
+            return formateado;
+        }
+
+        private string FuncEP(string stringArr)
+        {
+            string formateado = "";
+
+            for (int i = 0; i < 8; i++)
+            {
+                formateado += stringArr[EP[i]];
+            }
+            return formateado;
+        }
+
+        private string FuncIP(string stringArr)
+        {
+            string formateado = "";
+
+            for (int i = 0; i < 8; i++)
+            {
+                formateado += stringArr[IP[i]];
+            }
+            return formateado;
+        }
+
+        private string FuncIPINV(string stringArr)
+        {
+            string formateado = "";
+
+            for (int i = 0; i < 8; i++)
+            {
+                formateado += stringArr[IPINV[i]];
+            }
+            return formateado;
         }
     }
 }
