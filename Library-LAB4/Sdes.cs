@@ -99,18 +99,23 @@ namespace Library_LAB4
                 using BinaryWriter Bw = new BinaryWriter(writeStream);
 
                 var byteBuffer = new byte[buffer];
+                List<byte> WriteBuffer = new List<byte>();
 
                 while (Br.BaseStream.Position != Br.BaseStream.Length)
                 {
                     byteBuffer = Br.ReadBytes(buffer);
+                    WriteBuffer = new List<byte>();
                     foreach (var item in byteBuffer)
                     {
                         string caracterTemp = Convert.ToString(item, 2).PadLeft(8, '0');
-
-
-                        // string de binario a byte
-                        Bw.Write(caracter);
+                        caracterTemp = FuncIP(caracterTemp);
+                        caracterTemp = CodificacionIntermedia(caracterTemp, K1);
+                        caracterTemp = Swap(caracterTemp);
+                        caracterTemp = CodificacionIntermedia(caracterTemp, K2);
+                        caracterTemp = FuncIPINV(caracterTemp);
+                        WriteBuffer.Add((byte)Convert.ToInt32(caracterTemp, 2));
                     }
+                    Bw.Write(WriteBuffer.ToArray());
                 }
             }
             catch (Exception ex)
@@ -158,14 +163,14 @@ namespace Library_LAB4
             }
         }
 
-        private string CodificacionIntermedia(string stringIP, string Kinicial, string Kfinal)
+        private string CodificacionIntermedia(string stringIP, string K)
         {
             string mitadInicial = stringIP.Substring(0,4);
             string mitadFinal = stringIP.Substring(4, 4);
 
             string expMitad = FuncEP(mitadFinal);
 
-            expMitad = XOR(expMitad, Kinicial);
+            expMitad = XOR(expMitad, K);
 
             string mitadInicial_expMitad = expMitad.Substring(0,4);
             string mitadFinal_expMitad = expMitad.Substring(4,4);
@@ -198,9 +203,9 @@ namespace Library_LAB4
             return formateado;
         }
 
-        private string Swap(string strArr1, string strArr2)
+        private string Swap(string strArr)
         {
-            return strArr2 + strArr1;
+            return strArr.Substring(4,4) + strArr.Substring(0,4);
         }
 
         // ******************************* FUNCIONES DE PERMUTACIONES *******************************
