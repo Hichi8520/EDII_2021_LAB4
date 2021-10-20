@@ -157,8 +157,8 @@ namespace API_LAB4.Controllers
             }
             else if (method.Equals("sdes"))
             {
-                try
-                {
+                //try
+                //{
                     // Escribir archivos subidos hacia el servidor para trabajar con ellos
                     var path = _env.ContentRootPath;
                     path = Path.Combine(path, "Files");
@@ -195,11 +195,11 @@ namespace API_LAB4.Controllers
 
                     //Archivo a mandar de regreso
                     return PhysicalFile($"{rutaCifrado}/{fileName[0]}.sdes", "text/plain", $"{fileName[0]}.sdes");
-                }
-                catch (Exception ex)
-                {
-                    return StatusCode(500, "Internal server error");
-                }
+                //}
+                //catch (Exception ex)
+                //{
+                //    return StatusCode(500, "Internal server error");
+                //}
             }
             else
             {
@@ -213,8 +213,8 @@ namespace API_LAB4.Controllers
         {
             if (file == null) return StatusCode(400, "Bad request");
 
-            try
-            {
+            //try
+            //{
                 // Escribir archivo subido hacia el servidor para trabajar con él
                 var path = _env.ContentRootPath;
                 path = Path.Combine(path, "Files");
@@ -232,11 +232,11 @@ namespace API_LAB4.Controllers
 
                 sdes = new Sdes($"{pathSdes}/{file.FileName}");
                 return StatusCode(200);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "Internal server error");
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    return StatusCode(500, "Internal server error");
+            //}
         }
     }
 }

@@ -33,8 +33,8 @@ namespace Library_LAB4
 
         public Sdes(string rutaPermutaciones)
         {
-            try
-            {
+            //try
+            //{
                 string[] permutaciones = File.ReadAllLines(rutaPermutaciones);
 
                 P10 = permutaciones[0].Split(',').Select(int.Parse).ToArray();
@@ -44,19 +44,19 @@ namespace Library_LAB4
                 IP = permutaciones[4].Split(',').Select(int.Parse).ToArray();
 
                 IPINV = new int[8];
-                for (int i = 0; i < 8; i++) IPINV[i] = Array.IndexOf(IP, i);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+                for (int i = 1; i <= 8; i++) IPINV[i-1] = Array.IndexOf(IP, i);
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.WriteLine(e);
+            //    throw;
+            //}
         }
 
         public bool Cifrar(string rutaArchivo, string rutaLlave, string rutaCifrado, string nombreArchivo)
         {
-            try
-            {
+            //try
+            //{
                 cifrando = true;
                 descifrando = false;
 
@@ -72,18 +72,18 @@ namespace Library_LAB4
 
                 escribirArchivoResultante(rutaArchivo, rutaCifrado, nombreArchivo);
                 return true;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return false;
-            }
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.WriteLine(e);
+            //    return false;
+            //}
         }
 
         public bool Descifrar(string rutaCifrado, string rutaLlave, string rutaDescifrado, string nombreArchivo)
         {
-            try
-            {
+            //try
+            //{
                 cifrando = false;
                 descifrando = true;
 
@@ -99,12 +99,12 @@ namespace Library_LAB4
 
                 escribirArchivoResultante(rutaCifrado, rutaDescifrado, nombreArchivo);
                 return true;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return false;
-            }
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.WriteLine(e);
+            //    return false;
+            //}
         }
 
         private void GenerarLlaves()
@@ -124,8 +124,8 @@ namespace Library_LAB4
 
         private void escribirArchivoResultante(string rutaOrigen, string rutaDestino, string nombreArchivo)
         {
-            try
-            {
+            //try
+            //{
                 using var Fs = new FileStream(rutaOrigen, FileMode.Open);
                 using BinaryReader Br = new BinaryReader(Fs);
                 string extension = "";
@@ -159,36 +159,11 @@ namespace Library_LAB4
                     }
                     Bw.Write(WriteBuffer.ToArray());
                 }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
-        }
-
-        string DecimalaBinario(int deci, int val) //convierte el decimal enviado a un binario
-        {
-            string binario = string.Empty;
-            int residuo = 0;
-            for (int x = 0; deci > 1; x++)
-            {
-                residuo = deci % 2;
-                deci = deci / 2;
-                binario = residuo.ToString() + binario;
-            }
-
-            if (deci == 1)
-            {
-                binario = deci.ToString() + binario;
-            }
-            if (binario.Length != val)
-            {
-                for (int d = 0; d < (val - binario.Length); deci++)
-                {
-                    binario = '0' + binario;
-                }
-            }
-            return binario;
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine(ex);
+            //}
         }
 
         // ******************************* FUNCIONES PROCESO DE CIFRADO *******************************
@@ -246,7 +221,7 @@ namespace Library_LAB4
 
             for (int i = 0; i < 10; i++)
             {
-                formateado += stringArr[P10[i]];
+                formateado += stringArr[P10[i]-1];
             }
             return formateado;
         }
@@ -257,7 +232,7 @@ namespace Library_LAB4
 
             for (int i = 0; i < 8; i++)
             {
-                formateado += stringArr[P8[i]];
+                formateado += stringArr[P8[i]-1];
             }
             return formateado;
         }
@@ -268,7 +243,7 @@ namespace Library_LAB4
 
             for (int i = 0; i < 4; i++)
             {
-                formateado += stringArr[P4[i]];
+                formateado += stringArr[P4[i]-1];
             }
             return formateado;
         }
@@ -279,7 +254,7 @@ namespace Library_LAB4
 
             for (int i = 0; i < 8; i++)
             {
-                formateado += stringArr[EP[i]];
+                formateado += stringArr[EP[i]-1];
             }
             return formateado;
         }
@@ -290,7 +265,7 @@ namespace Library_LAB4
 
             for (int i = 0; i < 8; i++)
             {
-                formateado += stringArr[IP[i]];
+                formateado += stringArr[IP[i]-1];
             }
             return formateado;
         }
@@ -324,7 +299,7 @@ namespace Library_LAB4
         {
             int Fila = Convert.ToInt32(strArr.Substring(0,1) + strArr.Substring(3,1), 2);
             int Columna = Convert.ToInt32(strArr.Substring(1, 1) + strArr.Substring(2, 1), 2);
-            return Sbox[Fila, Columna, 0] + Sbox[Fila, Columna, 1];
+            return Sbox[Fila, Columna, 0] + Sbox[Fila, Columna, 0];
         }
     }
 }
