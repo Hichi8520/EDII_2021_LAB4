@@ -121,6 +121,52 @@ namespace API_LAB4.Controllers
                     return StatusCode(500, "Internal server error");
                 }
             }
+            else if (archivo[1].Equals("sdes"))
+            {
+                try
+                {
+                    // Escribir archivos subidos hacia el servidor para trabajar con ellos
+                    var path = _env.ContentRootPath;
+                    path = Path.Combine(path, "Files");
+
+                    string pathSdes = Path.Combine(path, "Sdes");
+
+
+                    if (System.IO.File.Exists($"{pathSdes}/{file.FileName}"))
+                    {
+                        System.IO.File.Delete($"{pathSdes}/{file.FileName}");
+                    }
+
+                    using var saverArchivo = new FileStream($"{pathSdes}/{file.FileName}", FileMode.OpenOrCreate);
+                    await file.CopyToAsync(saverArchivo);
+                    saverArchivo.Close();
+
+                    if (System.IO.File.Exists($"{pathSdes}/{key.FileName}"))
+                    {
+                        System.IO.File.Delete($"{pathSdes}/{key.FileName}");
+                    }
+
+                    using var saverLave = new FileStream($"{pathSdes}/{key.FileName}", FileMode.OpenOrCreate);
+                    await file.CopyToAsync(saverLave);
+                    saverLave.Close();
+
+
+                    // Proceso Cifrado Sdes
+                    string rutaCifrado = $"{pathSdes}/{file.FileName}";
+                    string rutaLlave = $"{pathSdes}/{key.FileName}";
+                    string rutaDescifrado = pathSdes;
+                    string[] fileName = file.FileName.Split(".");
+
+                    CipherController.sdes.Descifrar(rutaCifrado, rutaLlave, rutaDescifrado, fileName[0]);
+
+                    //Archivo a mandar de regreso
+                    return PhysicalFile($"{rutaDescifrado}/{fileName[0]}.txt", "text/plain", $"{fileName[0]}.txt");
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(500, "Internal server error");
+                }
+            }
             else
             {
                 return StatusCode(400, "Bad request");

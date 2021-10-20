@@ -14,7 +14,7 @@ namespace API_LAB4.Controllers
     [ApiController]
     public class CipherController : ControllerBase
     {
-        private static Sdes sdes;
+        public static readonly Sdes sdes;
 
         [HttpGet]
         public string Get()
@@ -36,6 +36,11 @@ namespace API_LAB4.Controllers
             if (!Directory.Exists(pathZigZag))
             {
                 Directory.CreateDirectory(pathZigZag);
+            }
+            string pathSdes = Path.Combine(path, "Sdes");
+            if (!Directory.Exists(pathSdes))
+            {
+                Directory.CreateDirectory(pathSdes);
             }
 
             // Mensaje de bienvenida
@@ -150,6 +155,52 @@ namespace API_LAB4.Controllers
                     return StatusCode(500, "Internal server error");
                 }
             }
+            else if (method.Equals("sdes"))
+            {
+                try
+                {
+                    // Escribir archivos subidos hacia el servidor para trabajar con ellos
+                    var path = _env.ContentRootPath;
+                    path = Path.Combine(path, "Files");
+
+                    string pathSdes = Path.Combine(path, "Sdes");
+
+
+                    if (System.IO.File.Exists($"{pathSdes}/{file.FileName}"))
+                    {
+                        System.IO.File.Delete($"{pathSdes}/{file.FileName}");
+                    }
+
+                    using var saverArchivo = new FileStream($"{pathSdes}/{file.FileName}", FileMode.OpenOrCreate);
+                    await file.CopyToAsync(saverArchivo);
+                    saverArchivo.Close();
+
+                    if (System.IO.File.Exists($"{pathSdes}/{key.FileName}"))
+                    {
+                        System.IO.File.Delete($"{pathSdes}/{key.FileName}");
+                    }
+
+                    using var saverLlave = new FileStream($"{pathSdes}/{key.FileName}", FileMode.OpenOrCreate);
+                    await key.CopyToAsync(saverLlave);
+                    saverLlave.Close();
+
+
+                    // Proceso Cifrado Sdes
+                    string rutaArchivo = $"{pathSdes}/{file.FileName}";
+                    string rutaLlave = $"{pathSdes}/{key.FileName}";
+                    string rutaCifrado = pathSdes;
+                    string[] fileName = file.FileName.Split(".");
+
+                    sdes.Cifrar(rutaArchivo, rutaLlave, rutaCifrado, fileName[0]);
+
+                    //Archivo a mandar de regreso
+                    return PhysicalFile($"{rutaCifrado}/{fileName[0]}.sdes", "text/plain", $"{fileName[0]}.sdes");
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(500, "Internal server error");
+                }
+            }
             else
             {
                 return StatusCode(400, "Bad request");
@@ -168,39 +219,19 @@ namespace API_LAB4.Controllers
                 var path = _env.ContentRootPath;
                 path = Path.Combine(path, "Files");
 
-                string pathCesar = Path.Combine(path, "Sdes");
+                string pathSdes = Path.Combine(path, "Sdes");
 
-
-                if (System.IO.File.Exists($"{pathCesar}/{file.FileName}"))
+                if (System.IO.File.Exists($"{pathSdes}/{file.FileName}"))
                 {
-                    System.IO.File.Delete($"{pathCesar}/{file.FileName}");
+                    System.IO.File.Delete($"{pathSdes}/{file.FileName}");
                 }
 
-                using var saverArchivo = new FileStream($"{pathCesar}/{file.FileName}", FileMode.OpenOrCreate);
+                using var saverArchivo = new FileStream($"{pathSdes}/{file.FileName}", FileMode.OpenOrCreate);
                 await file.CopyToAsync(saverArchivo);
                 saverArchivo.Close();
 
-                if (System.IO.File.Exists($"{pathCesar}/{key.FileName}"))
-                {
-                    System.IO.File.Delete($"{pathCesar}/{key.FileName}");
-                }
-
-                using var saverLlave = new FileStream($"{pathCesar}/{key.FileName}", FileMode.OpenOrCreate);
-                await key.CopyToAsync(saverLlave);
-                saverLlave.Close();
-
-
-                // Proceso Cifrado César
-                string rutaArchivo = $"{pathCesar}/{file.FileName}";
-                string rutaLlave = $"{pathCesar}/{key.FileName}";
-                string rutaCifrado = pathCesar;
-                string[] fileName = file.FileName.Split(".");
-
-                Cesar cesar = new Cesar();
-                cesar.Cifrar(rutaArchivo, rutaLlave, rutaCifrado, fileName[0]);
-
-                //Archivo a mandar de regreso
-                return PhysicalFile($"{rutaCifrado}/{fileName[0]}.csr", "text/plain", $"{fileName[0]}.csr");
+                sdes = new Sdes($"{pathSdes}/{file.FileName}");
+                return StatusCode(200);
             }
             catch (Exception ex)
             {
