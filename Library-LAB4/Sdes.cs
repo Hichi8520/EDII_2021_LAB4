@@ -10,6 +10,8 @@ namespace Library_LAB4
     {
         public static int buffer = 255;
         public static string llave = "";
+        private string K1;
+        private string K2;
         private int[] P10;
         private int[] P8;
         private int[] P4;
@@ -50,6 +52,8 @@ namespace Library_LAB4
                 llave = llave.PadLeft(10, '0');
                 Console.WriteLine("Llave: " + llave);
 
+                GenerarLlaves();
+
                 escribirCifrado(rutaArchivo, rutaCifrado, nombreArchivo);
                 return true;
             }
@@ -58,6 +62,21 @@ namespace Library_LAB4
                 Console.WriteLine(e);
                 return false;
             }
+        }
+
+        private void GenerarLlaves()
+        {
+            string strP10 = FuncP10(llave);
+
+            string MitadInicialShift = LeftShift1(strP10.Substring(0,5));
+            string MitadFinalShift = LeftShift1(strP10.Substring(5,5));
+
+            K1 = FuncP8(MitadInicialShift + MitadFinalShift);
+
+            MitadInicialShift = LeftShift2(MitadInicialShift);
+            MitadFinalShift = LeftShift2(MitadFinalShift);
+
+            K2 = FuncP8(MitadInicialShift + MitadFinalShift);
         }
 
         private void escribirCifrado(string rutaArchivo, string rutaCifrado, string nombreArchivo)
@@ -73,13 +92,13 @@ namespace Library_LAB4
 
                 while (Br.BaseStream.Position != Br.BaseStream.Length)
                 {
-                    while (Br.BaseStream.Position != Br.BaseStream.Length)
+                    byteBuffer = Br.ReadBytes(buffer);
+                    foreach (var item in byteBuffer)
                     {
-                        string binario = DecimalaBinario(Br.ReadChar(),8);
-                        for(int i = 1; i <= binario.Length; i++)
-                        {
-                            value.Add(i, binario[i - 1]);
-                        }
+                        string caracterTemp = Convert.ToString(item, 2).PadLeft(8, '0');
+
+                        // string de binario a byte
+                        Bw.Write(caracter);
                     }
                 }
             }
@@ -127,6 +146,8 @@ namespace Library_LAB4
                 return false;
             }
         }
+
+        // ******************************* FUNCIONES DE PERMUTACIONES *******************************
 
         private string FuncP10(string stringArr)
         {
@@ -192,6 +213,16 @@ namespace Library_LAB4
                 formateado += stringArr[IPINV[i]];
             }
             return formateado;
+        }
+
+        private string LeftShift1(string stringArr)
+        {
+            return stringArr.Substring(1, 4) + stringArr.Substring(0, 1);
+        }
+
+        private string LeftShift2(string stringArr)
+        {
+            return stringArr.Substring(2, 3) + stringArr.Substring(0, 2);
         }
     }
 }
